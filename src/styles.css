@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #090c11;
+  --color-gold: #c8b6a0;
+  --color-gold-border: #7c6448;
+  --color-wiki-blue: #7fc0dc;
+  --font-smite: "PenumbraFlareStd-Semibold", sans-serif;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html,
+  body {
+    background: var(--color-bg);
+    min-height: 100%;
+  }
+}

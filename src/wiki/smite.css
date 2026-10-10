@@ -1,0 +1,859 @@
+
+    @font-face {
+      font-family: 'PenumbraFlareStd-Semibold';
+      src: url('/fonts/PenumbraFlareStd-Semibold.woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+
+    :root {
+      --wiki-gold-title: #C8B6A0;
+      --wiki-gold-border: #7C6448;
+      --wiki-gold-subtle: #4a3c22;
+      --wiki-blue-text: #7FC0DC;
+      --wiki-bg-dark: #090C11;
+      --wiki-card-bg: rgba(24, 32, 48, 0.75);
+      --wiki-header-bg: linear-gradient(180deg, #242834 0%, #151922 100%);
+      --wiki-table-border: #0F1523;
+    }
+
+    .smite-app, .smite-app *, .smite-app *::before, .smite-app *::after {
+      font-family: 'PenumbraFlareStd-Semibold', sans-serif !important;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :where(.smite-app, .smite-app *) {
+      margin: 0;
+      padding: 0;
+    }
+
+    .smite-app {
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--wiki-bg-dark);
+      color: #d1d5db;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    .smite-app.edit-mode-off .edit-only,
+    .smite-app.edit-mode-off .card-edit-btn,
+    .smite-app.edit-mode-off .floating-edit-btn {
+      display: none !important;
+    }
+
+    /* TOP HUD */
+    .smite-top-hud {
+      height: 48px;
+      background: linear-gradient(180deg, #111722 0%, #06090e 100%);
+      border-bottom: 2px solid var(--wiki-gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .smite-back-btn {
+      background: linear-gradient(180deg, #1e2838 0%, #0a0f18 100%);
+      border: 1px solid var(--wiki-gold-border);
+      color: var(--wiki-gold-title);
+      padding: 4px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: none;
+    }
+
+    .wiki-title {
+      font-size: 1.1rem;
+      color: var(--wiki-gold-title);
+      letter-spacing: 1px;
+    }
+
+    #mainBgUploadHeader {
+      display: none;
+    }
+
+    .smite-app.on-screen-main #mainBgUploadHeader {
+      display: block;
+    }
+
+    .smite-viewport {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* MAIN MENU */
+    .screen-main-menu {
+      width: 100%;
+      min-height: calc(100vh - 86px);
+      display: flex;
+      background: linear-gradient(rgba(4,6,8,0.7), rgba(4,6,8,0.85)), var(--bg-main-img, url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop')) center/cover no-repeat;
+      padding: 30px 20px;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .smite-nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .nav-item {
+      font-size: 1.6rem;
+      color: #e2e8f0;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      color: var(--wiki-gold-title);
+      transform: scale(1.05);
+    }
+
+    /* ROSTER */
+    .screen-roster {
+      width: 100%;
+      min-height: calc(100vh - 86px);
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .roster-header {
+      font-size: 1.3rem;
+      color: var(--wiki-gold-title);
+      border-bottom: 1px solid var(--wiki-gold-border);
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .gods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 18px;
+      width: 100%;
+    }
+
+    .god-card-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-edit-btn {
+      position: absolute;
+      top: -10px;
+      right: -6px;
+      background: rgba(13, 17, 26, 0.95);
+      border: 1px solid var(--wiki-gold-border);
+      color: var(--wiki-gold-title);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 0 6px #000;
+    }
+
+    .smite-god-select-card {
+      width: 100%;
+      aspect-ratio: 0.75;
+      border: 2px solid var(--wiki-gold-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+      background-image: linear-gradient(180deg, rgba(0,0,0,0.1) 40%, rgba(5,8,15,0.85) 100%), var(--card-bg-url);
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      border-radius: 2px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .smite-god-select-card:hover {
+      transform: scale(1.03);
+      border-color: var(--wiki-gold-title);
+    }
+
+    .god-select-card-name {
+      width: 100%;
+      padding: 12px 4px 6px 4px;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: bold;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.95) 100%);
+      text-shadow: 0 1px 4px rgba(0,0,0,1);
+    }
+
+    @keyframes skinCardPulse {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
+      100% { filter: brightness(1); }
+    }
+
+    .smite-skin-card-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .smite-skin-card {
+      width: 100%;
+      aspect-ratio: 0.75;
+      border: 2px solid #5a4b32;
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+      background-image: linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(5,8,15,0.9) 100%), var(--skin-bg-url);
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      border-radius: 2px;
+      animation: skinCardPulse 4s infinite ease-in-out;
+      transition: transform 0.25s ease, border-color 0.25s ease, filter 0.25s ease;
+    }
+    .smite-skin-card:active {
+      transform: scale(0.97);
+      filter: brightness(1.2);
+    }
+    .god-stage {
+      transition: background-image 0.4s ease-in-out;
+    }
+
+    .smite-skin-card:hover {
+      transform: scale(1.03);
+      border-color: #7C6448;
+    }
+
+    .skin-card-banner {
+      width: 90%;
+      margin: 0 auto 6px auto;
+      padding: 3px 4px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-transform: uppercase;
+      border-radius: 1px;
+      border: none;
+      border-bottom: 0.15px solid rgba(255,255,255,0.15);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 3px 8px rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .skin-card-banner span {
+      display: inline-block;
+      font-family: 'PenumbraFlareStd-Semibold', sans-serif !important;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 1px rgba(0,0,0,1);
+    }
+
+    .tier-padrao { display: none; }
+    .tier-limitado { background: linear-gradient(180deg, rgba(120, 40, 180, 0.45) 30%, rgba(40, 10, 80, 0.65) 100%); border: 0.5px solid rgba(168, 85, 247, 0.25); }
+    .tier-unlimited { background: linear-gradient(180deg, rgba(30, 150, 75, 0.45) 30%, rgba(10, 60, 25, 0.65) 100%); border: 0.5px solid rgba(74, 222, 128, 0.25); }
+    .tier-crossover { background: linear-gradient(180deg, rgba(15, 150, 220, 0.45) 30%, rgba(5, 50, 90, 0.65) 100%); border: 0.5px solid rgba(56, 189, 248, 0.25); }
+    .tier-crossgen { background: linear-gradient(180deg, rgba(220, 155, 10, 0.48) 30%, rgba(90, 60, 2, 0.65) 100%); border: 0.5px solid rgba(250, 204, 21, 0.3); }
+    .tier-promocional { background: linear-gradient(180deg, rgba(210, 30, 105, 0.45) 30%, rgba(80, 10, 40, 0.65) 100%); border: 0.5px solid rgba(244, 114, 182, 0.25); }
+    .tier-exclusivo { background: linear-gradient(180deg, rgba(200, 135, 45, 0.48) 30%, rgba(75, 45, 10, 0.65) 100%); border: 0.5px solid rgba(234, 179, 8, 0.3); }
+
+    .skin-card-bottom-title {
+      font-size: 0.85rem;
+      color: var(--wiki-gold-title);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .screen-god-view {
+      width: 100%;
+      min-height: calc(100vh - 86px);
+      display: none;
+      grid-template-columns: 220px 1fr;
+      padding: 15px;
+      gap: 15px;
+    }
+
+    @media (max-width: 850px) {
+      .screen-god-view { grid-template-columns: 1fr; }
+    }
+
+    .god-sidebar {
+      background: var(--wiki-card-bg);
+      border: 1px solid var(--wiki-gold-border);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+      gap: 2px;
+    }
+
+    .god-tab-btn {
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      color: #94a3b8;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      text-align: left;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .god-tab-btn.active {
+      background: linear-gradient(90deg, rgba(77, 166, 255, 0.2) 0%, transparent 100%);
+      border-left-color: var(--wiki-blue-text);
+      color: #fff;
+    }
+
+    .god-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      padding: 20px;
+      border: 1px solid var(--wiki-gold-border);
+      transition: background-image 0.4s ease-in-out;
+    }
+
+    .god-panel-card {
+      width: 100%;
+      max-width: 650px;
+      background: rgba(18, 25, 40, 0.78);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--wiki-gold-border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .about-icons-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--wiki-table-border);
+      gap: 16px;
+    }
+
+    .about-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .about-icon-img {
+      width: 130px;
+      height: 130px;
+      object-fit: contain;
+    }
+
+    .about-icon-value {
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--wiki-blue-text);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .screen-voicebank-view {
+      width: 100%;
+      min-height: calc(100vh - 86px);
+      display: none;
+      padding: 20px;
+      position: relative;
+    }
+
+    .voicebank-container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .voicebank-container { grid-template-columns: 1fr; }
+    }
+
+    .wiki-side-box {
+      background: #090e17;
+      border: 1px solid var(--wiki-gold-border);
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 8px;
+    }
+
+    .wiki-title-header {
+      background: var(--wiki-header-bg);
+      border: 1px solid var(--wiki-table-border);
+      color: var(--wiki-gold-title);
+      font-size: 1.05rem;
+      text-align: center;
+      padding: 10px 8px;
+    }
+
+    .wiki-god-image {
+      width: 100%;
+      aspect-ratio: 0.75;
+      object-fit: cover;
+      border: 1px solid var(--wiki-table-border);
+    }
+
+    .wiki-summary-box {
+      background: #090C11;
+      border: 1px solid var(--wiki-gold-border);
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .wiki-summary-title {
+      background: var(--wiki-header-bg);
+      color: var(--wiki-gold-title);
+      font-size: 1rem;
+      text-align: center;
+      padding: 8px;
+      border-bottom: 1px solid var(--wiki-gold-border);
+    }
+
+    .wiki-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .wiki-summary-table td {
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--wiki-table-border);
+    }
+
+    .wiki-summary-label {
+      background: rgba(18, 25, 41, 0.95);
+      color: #e2e8f0;
+      width: 50%;
+      border-right: 1px solid var(--wiki-table-border);
+    }
+
+    .wiki-summary-val {
+      background: #090C11;
+      color: #fff;
+      text-align: left;
+    }
+
+    .wiki-summary-val.blue-link {
+      color: var(--wiki-blue-text);
+    }
+
+    .wiki-btn-menu {
+      background: var(--wiki-header-bg);
+      border: 1px solid var(--wiki-table-border);
+      color: var(--wiki-blue-text);
+      padding: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wiki-btn-menu.active {
+      background: #1e293b;
+      color: var(--wiki-gold-title);
+      border-color: var(--wiki-gold-border);
+    }
+
+    .tree-category-box {
+      background: rgba(12, 18, 28, 0.85);
+      border: 1px solid var(--wiki-gold-border);
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 2px;
+    }
+
+    .tree-category-title {
+      color: var(--wiki-gold-title);
+      font-size: 1rem;
+      border-bottom: 1px solid var(--wiki-table-border);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tree-subcategory-box {
+      margin-left: 14px;
+      border-left: 2px solid var(--wiki-blue-text);
+      padding-left: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tree-subcategory-title {
+      color: var(--wiki-blue-text);
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .voice-line-item {
+      background: rgba(20, 28, 44, 0.6);
+      border: 1px solid var(--wiki-table-border);
+      padding: 8px 12px;
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vgs-outside-title {
+      color: var(--wiki-gold-title);
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* BORDAS VGS COLADAS EXATAS */
+    .vgs-wiki-box {
+      background: #090C11;
+      border: 1px solid #7C6448;
+      box-shadow: inset 0 0 0 1px #0B0C11;
+      padding: 0;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .vgs-wiki-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #090C11;
+      border: none;
+    }
+
+    .vgs-wiki-table th {
+      background: linear-gradient(180deg, #242834 0%, #151922 100%);
+      color: #C8B6A0;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      border: 1.5px solid #0F1523 !important;
+      box-shadow: inset 0 0 0 1.5px #424C58;
+      position: relative;
+      z-index: 2;
+    }
+
+    .vgs-wiki-table td {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      background: #090C11;
+      border-bottom: 1.5px solid #0F1523;
+      border-top: none;
+    }
+
+    .vgs-wiki-table tr {
+      border-left: 1.5px solid #0F1523;
+      border-right: 1.5px solid #0F1523;
+    }
+
+    .vgs-wiki-table td:first-child {
+      border-right: 1.5px solid #0F1523 !important;
+      border-left: 1.5px solid #0F1523 !important;
+      border-top: none !important;
+    }
+
+    .vgs-wiki-table td:nth-child(2) {
+      border-right: 1.5px solid #0F1523 !important;
+      border-left: none !important;
+      border-top: none !important;
+    }
+
+    .vgs-wiki-table td:last-child {
+      border-right: 1.5px solid #0F1523 !important;
+      border-top: none !important;
+    }
+
+    .vgs-code-cell {
+      width: 80px;
+      color: #ffffff;
+      font-size: 1rem;
+      text-align: left !important;
+    }
+
+    .vgs-code-cell.is-cat-code {
+      color: #7FC0DC !important;
+    }
+
+    .vgs-outcome-cell {
+      text-align: left;
+      color: #ffffff;
+    }
+
+    .vgs-outcome-cell.is-category-result {
+      text-align: center !important;
+    }
+
+    .vgs-category-highlight {
+      color: #7FC0DC !important;
+      text-align: center !important;
+      display: block;
+      width: 100%;
+    }
+
+    /* BOTÃO DE ÁUDIO LIMPO SEM DUPLICAÇÃO DE SÍMBOLO */
+    .vgs-play-double-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      padding: 2px 6px;
+      line-height: 1;
+      transition: transform 0.15s ease;
+    }
+    .vgs-play-double-btn:hover {
+      transform: scale(1.15);
+    }
+    .vgs-play-double-btn.playing {
+      animation: audioPulse 0.8s infinite alternate;
+    }
+
+    @keyframes audioPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.25); }
+    }
+
+    .smite-input, .smite-select, .smite-textarea {
+      background: #090e17;
+      border: 1px solid var(--wiki-gold-border);
+      color: #fff;
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .smite-btn-sm {
+      background: var(--wiki-header-bg);
+      border: 1px solid var(--wiki-gold-border);
+      color: var(--wiki-gold-title);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .smite-btn-danger {
+      background: #991b1b;
+      border: 1px solid #ef4444;
+      color: #ffffff;
+      padding: 6px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .smite-btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .floating-page-edit-btn {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      background: linear-gradient(180deg, #2a384f 0%, #0d1522 100%);
+      border: 2px solid var(--wiki-gold-title);
+      color: var(--wiki-gold-title);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 150;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+      transition: transform 0.2s;
+    }
+
+    .floating-page-edit-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-box {
+      background: #090e17;
+      border: 2px solid var(--wiki-gold-border);
+      padding: 20px;
+      width: 90%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+
+    /* CHAT BAR - DESIGN EXATO FIDEDIGNO AO SMITE */
+    .smite-bottom-hud {
+      height: 38px;
+      background: linear-gradient(180deg, #10141c 0%, #06080c 100%);
+      border-top: 1px solid #7C6448;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      font-size: 0.82rem;
+      color: #C8B6A0;
+    }
+
+    .chat-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-bar-audio-tab {
+      background: linear-gradient(180deg, #2A303D 0%, #121620 100%);
+      border: 1px solid #7C6448;
+      color: #C8B6A0;
+      padding: 3px 16px 3px 12px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-transform: capitalize;
+      clip-path: polygon(0 0, 84% 0, 100% 100%, 0 100%);
+    }
+
+    .chat-bar-input-mock {
+      background: #05070a;
+      border: 1px solid #1E2532;
+      color: #94a3b8;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      min-width: 220px;
+      border-radius: 1px;
+    }
+
+    .chat-bar-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .chat-bar-gear-btn {
+      background: #11151e;
+      border: 1.5px solid #C8B6A0;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px #7C6448;
+      transition: transform 0.2s;
+    }
+    .chat-bar-gear-btn:hover {
+      transform: rotate(30deg);
+    }
+
+    .gear-icon-svg {
+      width: 14px;
+      height: 14px;
+      fill: #C8B6A0;
+    }
+  
+    .smite-app input,
+    .smite-app textarea {
+      user-select: text;
+    }
