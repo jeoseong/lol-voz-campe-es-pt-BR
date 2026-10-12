@@ -43,7 +43,7 @@ function Home() {
 
     w.__smiteWikiLoading = true;
     const script = document.createElement("script");
-    script.src = "/smite/wiki.js";
+    script.src = "/smite/wiki.js?v=4";
     script.async = false;
     script.onload = () => {
       w.__smiteWikiLoaded = true;
@@ -57,6 +57,7 @@ function Home() {
     <div
       id="smite-app"
       className="smite-app on-screen-main"
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: bodyHtml }}
     />
   );

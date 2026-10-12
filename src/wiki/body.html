@@ -26,9 +26,8 @@
     <!-- ROSTER DE SELEÇÃO DE DEUS -->
     <div class="screen-roster" id="screenRoster">
       <div class="roster-header">
-        <span id="rosterTitle">SELECIONE UM DEUS</span>
-        <div style="display:flex; gap:10px;">
-          <input type="text" id="rosterSearch" class="smite-input" style="max-width: 200px;" placeholder="🔍 Buscar Deus..." oninput="renderRoster()">
+        <div style="display:flex; gap:10px; width:100%; justify-content:flex-end; align-items:center;">
+          <input type="text" id="rosterSearch" class="smite-input" style="max-width: 240px;" placeholder="" aria-label="Buscar deus" oninput="renderRoster()">
           <button class="smite-btn-sm edit-only" onclick="openGodModal(null)">+ Novo Deus</button>
         </div>
       </div>
@@ -119,7 +118,7 @@
           <div class="wiki-btn-menu active" id="btnVpGod" onclick="switchVPMode('god')">VOZ DO DEUS</div>
           <div class="wiki-btn-menu" id="btnVpSkin" onclick="switchVPMode('skin')">VOZ POR APARÊNCIA</div>
           <div class="wiki-btn-menu" id="btnVpAnnouncer" onclick="switchVPMode('announcer')">Pacotes de locutor</div>
-          <div class="wiki-btn-menu" id="btnVpVGS" onclick="switchVPMode('vgs')">Sistema guiado por voz</div>
+          <div class="wiki-btn-menu" id="btnVpVGS" onclick="switchVPMode('vgs')">Comandos de voz</div>
         </div>
 
         <div class="vgs-tables-content" id="vpContentArea" style="position:relative;">
@@ -203,8 +202,9 @@
         <select id="modalTreeParentSelect" class="smite-select"></select>
       </div>
       <div class="form-group" id="groupTreeAudio">
-        <label>Arquivo de Áudio:</label>
-        <input type="file" id="modalTreeAudioFile" class="smite-input" accept="audio/*">
+        <label>Áudios (pode adicionar vários):</label>
+        <div id="treeAudioList" class="audio-chip-list"></div>
+        <input type="file" id="modalTreeAudioFile" class="smite-input" accept="audio/*" multiple onchange="onTreeAudioPicked(event)">
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
         <button class="smite-btn-danger" id="btnDeleteTreeItem" onclick="deleteTreeItem()" style="display:none;" title="Excluir">🗑️</button>
@@ -234,22 +234,26 @@
         <input type="text" id="modalVgsCode" class="smite-input">
       </div>
       <div class="form-group">
-        <label>Resultado / Texto:</label>
-        <input type="text" id="modalVgsResult" class="smite-input">
+        <label>Resultado / Texto (Enter cria outro parágrafo):</label>
+        <textarea id="modalVgsResult" class="smite-textarea" rows="4"></textarea>
       </div>
       <div class="form-group">
         <label>É Categoria de Resultado?</label>
-        <select id="modalVgsIsCat" class="smite-select">
+        <select id="modalVgsIsCat" class="smite-select" onchange="toggleVgsCategoryFields()">
           <option value="false">Não (Comando Normal)</option>
           <option value="true">Sim (Categoria de Resultado)</option>
         </select>
       </div>
+      <div class="form-group" id="groupVgsLink" style="display:none;">
+        <label>Ao clicar no texto, ir para a caixa:</label>
+        <select id="modalVgsLinkBox" class="smite-select">
+          <option value="">Não levar a nenhuma caixa</option>
+        </select>
+      </div>
       <div class="form-group">
-        <label>Upload de Áudio (Arquivo da Coluna):</label>
-        <div style="display:flex; gap:6px;">
-          <input type="file" id="modalVgsAudioFile" class="smite-input" accept="audio/*">
-          <button class="smite-btn-danger" id="btnRemoveAudioFile" onclick="removeAudioFromVgsRow()" title="Remover apenas o áudio" style="display:none;">🗑️</button>
-        </div>
+        <label>Áudios (pode adicionar mais de um):</label>
+        <div id="vgsAudioList" class="audio-chip-list"></div>
+        <input type="file" id="modalVgsAudioFile" class="smite-input" accept="audio/*" multiple onchange="onVgsAudioPicked(event)">
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
         <button class="smite-btn-danger" id="btnDeleteVgsRow" onclick="deleteVgsRow()" style="display:none;" title="Excluir Comando">🗑️</button>

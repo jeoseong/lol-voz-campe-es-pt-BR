@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { authClient, authEnabled } from "./client";
 
 /** Normalized user shape used across the app, auth on or off. */
@@ -34,8 +33,6 @@ export type CurrentUserState = {
   isPending: boolean;
 };
 
-const DEV_STATE: CurrentUserState = { user: DEV_USER, isPending: false };
-
 /**
  * Current user + loading state. Same behavior in live preview and when deployed:
  *   - Auth enabled -> the real signed-in user; `user` is `null` while
@@ -58,22 +55,22 @@ const DEV_STATE: CurrentUserState = { user: DEV_USER, isPending: false };
  * call keeps a stable hook order across every render of a given component.
  */
 export function useCurrentUserState(): CurrentUserState {
-  if (!authEnabled) return DEV_STATE;
+  if (!authEnabled) return { user: DEV_USER, isPending: false };
   // eslint-disable-next-line react-hooks/rules-of-hooks -- authEnabled is constant for the app's lifetime
-  return useSessionUserState();
-}
-
-function useSessionUserState(): CurrentUserState {
   const { data, isPending } = authClient.useSession();
-  const id = data?.user.id;
-  const displayName = data?.user.name ?? null;
-  const primaryEmail = data?.user.email ?? null;
-  const profileImageUrl = data?.user.image ?? null;
-  const user = useMemo<AppUser | null>(
-    () => (id ? { id, displayName, primaryEmail, profileImageUrl, isDevFallback: false } : null),
-    [id, displayName, primaryEmail, profileImageUrl],
-  );
-  return useMemo(() => ({ user, isPending }), [user, isPending]);
+  const user = data?.user;
+  return {
+    user: user
+      ? {
+          id: user.id,
+          displayName: user.name ?? null,
+          primaryEmail: user.email ?? null,
+          profileImageUrl: user.image ?? null,
+          isDevFallback: false,
+        }
+      : null,
+    isPending,
+  };
 }
 
 /**
