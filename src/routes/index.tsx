@@ -27,8 +27,32 @@ type WikiWindow = Window & {
 
 function Home() {
   useEffect(() => {
+    const panel = document.createElement("pre");
+    panel.id = "smite-runtime-diagnostic";
+    panel.style.cssText =
+      "position:fixed;z-index:2147483647;left:8px;right:8px;bottom:8px;max-height:38vh;overflow:auto;margin:0;padding:12px;background:#111;color:#8cff9b;border:2px solid #555;border-radius:8px;font:12px monospace;white-space:pre-wrap;word-break:break-word;";
+    document.body.appendChild(panel);
+
+    const report = (message: string) => {
+      panel.textContent += message + "\\n";
+    };
+
+    report("DIAGNÓSTICO ATIVO: inicializando página.");
+
+    window.addEventListener("error", (event) => {
+      report("ERRO JS: " + event.message + " | " + event.filename + ":" + event.lineno);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      report("PROMISE REJEITADA: " + String(event.reason));
+    });
+
     const w = window as WikiWindow;
-    const boot = () => w.bootSmiteWiki?.();
+    const boot = () => {
+      report("Chamando bootSmiteWiki: " + typeof w.bootSmiteWiki);
+      w.bootSmiteWiki?.();
+      report("Chamada de bootSmiteWiki concluída.");
+    };
 
     if (w.__smiteWikiLoaded) {
       boot();
@@ -49,6 +73,9 @@ function Home() {
       w.__smiteWikiLoaded = true;
       window.dispatchEvent(new Event("smite-wiki-ready"));
       boot();
+    };
+    script.onerror = () => {
+      report("ERRO: não foi possível carregar " + script.src);
     };
     document.body.appendChild(script);
   }, []);
