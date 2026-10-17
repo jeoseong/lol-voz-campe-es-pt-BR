@@ -18,11 +18,11 @@
         name: 'IZANAMI',
         title: 'MATRON OF THE DEAD',
         pantheon: 'Japonês',
-        pantheonImg: 'https://images.unsplash.com/photo-1528164344705-47542687990d?q=80&w=100&auto=format&fit=crop',
+        pantheonImg: '/smite-icons/NewUI_Pantheon_Japanese.webp',
         type: 'Físico',
-        typeImg: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?q=80&w=100&auto=format&fit=crop',
+        typeImg: '/smite-icons/NewUI_Type_Physical.png',
         class: 'Caçador',
-        classImg: 'https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=100&auto=format&fit=crop',
+        classImg: '/smite-icons/NewUI_Class_Hunter.webp',
         miniQuote: 'Devastem o campo de batalha com foices mortais.',
         difficulty: 'Média',
         lore: 'Izanami foi a deusa japonesa da criação e da morte.',
@@ -60,6 +60,7 @@
     let editingTreeTarget = null;
 
     let activeAudioInstance = null;
+    let audioSwitchToken = 0;
     let activePlayButtonElement = null;
     let activeAudioLabel = '';
     let chatToken = 0;
@@ -1494,7 +1495,78 @@
       }
     }
 
+
+    function normalizeAboutIconName(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLocaleLowerCase('pt-BR');
+    }
+
+    function syncAboutIconBank(inputId, selectId, mapping) {
+      const input = document.getElementById(inputId);
+      const select = document.getElementById(selectId);
+      if (!input || !select) return;
+
+      const normalized = normalizeAboutIconName(input.value);
+      const path = mapping[normalized];
+
+      // Só altera a seleção quando existe correspondência válida.
+      // Nomes desconhecidos não apagam a escolha já existente.
+      if (path && [...select.options].some(o => o.value === path)) {
+        select.value = path;
+      }
+    }
+
+    function setupAboutIconAutoMapping() {
+      const mappings = [
+        ['aboutPantheonName', 'aboutPantheonBank', {
+          'arthuriano': '/smite-icons/NewUI_Pantheon_Arthurian.png',
+          'babilonico': '/smite-icons/NewUI_Pantheon_Babylonian.png',
+          'celta': '/smite-icons/NewUI_Pantheon_Celtic.png',
+          'chines': '/smite-icons/NewUI_Pantheon_Chinese.png',
+          'egipcio': '/smite-icons/NewUI_Pantheon_Egyptian.png',
+          'grandes antigos': '/smite-icons/NewUI_Pantheon_Great_Old_Ones.png',
+          'os grandes antigos': '/smite-icons/NewUI_Pantheon_Great_Old_Ones.png',
+          'grego': '/smite-icons/NewUI_Pantheon_Greek.png',
+          'hindu': '/smite-icons/NewUI_Pantheon_Hindu.png',
+          'japones': '/smite-icons/NewUI_Pantheon_Japanese.webp',
+          'maia': '/smite-icons/NewUI_Pantheon_Maya.png',
+          'nordico': '/smite-icons/NewUI_Pantheon_Norse.png',
+          'polinesio': '/smite-icons/NewUI_Pantheon_Polynesian.png',
+          'romano': '/smite-icons/NewUI_Pantheon_Roman.png',
+          'eslavo': '/smite-icons/NewUI_Pantheon_Slavic.png',
+          'vodu': '/smite-icons/NewUI_Pantheon_Voodoo.png',
+          'ioruba': '/smite-icons/NewUI_Pantheon_Yoruba.png'
+        }],
+        ['aboutTypeName', 'aboutTypeBank', {
+          'magico': '/smite-icons/NewUI_Type_Magical.png',
+          'fisico': '/smite-icons/NewUI_Type_Physical.png'
+        }],
+        ['aboutClassName', 'aboutClassBank', {
+          'guardiao': '/smite-icons/NewUI_Class_Guardian.png',
+          'guerreiro': '/smite-icons/NewUI_Class_Warrior.png',
+          'cacador': '/smite-icons/NewUI_Class_Hunter.webp',
+          'mago': '/smite-icons/NewUI_Class_Mage.png',
+          'assassino': '/smite-icons/NewUI_Class_Assassin.webp',
+          'desconhecida': '/smite-icons/NewUI_Class_Unknown.png',
+          'desconhecido': '/smite-icons/NewUI_Class_Unknown.png'
+        }]
+      ];
+
+      for (const [inputId, selectId, mapping] of mappings) {
+        const input = document.getElementById(inputId);
+        if (!input || input.dataset.iconMappingReady === '1') continue;
+        input.addEventListener('input', () => {
+          syncAboutIconBank(inputId, selectId, mapping);
+        });
+        input.dataset.iconMappingReady = '1';
+      }
+    }
+
     function openAboutModal() {
+      setupAboutIconAutoMapping();
       const god = godsDatabase[selectedGodIdx];
       document.getElementById('aboutPantheonName').value = god.pantheon || '';
       document.getElementById('aboutTypeName').value = god.type || '';
@@ -1504,6 +1576,56 @@
       ['aboutPantheonImgFile', 'aboutTypeImgFile', 'aboutClassImgFile'].forEach((id) => {
         const el = document.getElementById(id);
         if (el) el.value = '';
+      });
+      [
+        ['aboutPantheonBank', god.pantheonImg, 'aboutPantheonName', {
+          'arthuriano': '/smite-icons/NewUI_Pantheon_Arthurian.png',
+          'babilonico': '/smite-icons/NewUI_Pantheon_Babylonian.png',
+          'celta': '/smite-icons/NewUI_Pantheon_Celtic.png',
+          'chines': '/smite-icons/NewUI_Pantheon_Chinese.png',
+          'egipcio': '/smite-icons/NewUI_Pantheon_Egyptian.png',
+          'grandes antigos': '/smite-icons/NewUI_Pantheon_Great_Old_Ones.png',
+          'os grandes antigos': '/smite-icons/NewUI_Pantheon_Great_Old_Ones.png',
+          'grego': '/smite-icons/NewUI_Pantheon_Greek.png',
+          'hindu': '/smite-icons/NewUI_Pantheon_Hindu.png',
+          'japones': '/smite-icons/NewUI_Pantheon_Japanese.webp',
+          'maia': '/smite-icons/NewUI_Pantheon_Maya.png',
+          'nordico': '/smite-icons/NewUI_Pantheon_Norse.png',
+          'polinesio': '/smite-icons/NewUI_Pantheon_Polynesian.png',
+          'romano': '/smite-icons/NewUI_Pantheon_Roman.png',
+          'eslavo': '/smite-icons/NewUI_Pantheon_Slavic.png',
+          'vodu': '/smite-icons/NewUI_Pantheon_Voodoo.png',
+          'ioruba': '/smite-icons/NewUI_Pantheon_Yoruba.png'
+        }],
+        ['aboutTypeBank', god.typeImg, 'aboutTypeName', {
+          'magico': '/smite-icons/NewUI_Type_Magical.png',
+          'fisico': '/smite-icons/NewUI_Type_Physical.png'
+        }],
+        ['aboutClassBank', god.classImg, 'aboutClassName', {
+          'guardiao': '/smite-icons/NewUI_Class_Guardian.png',
+          'guerreiro': '/smite-icons/NewUI_Class_Warrior.png',
+          'cacador': '/smite-icons/NewUI_Class_Hunter.webp',
+          'mago': '/smite-icons/NewUI_Class_Mage.png',
+          'assassino': '/smite-icons/NewUI_Class_Assassin.webp',
+          'desconhecida': '/smite-icons/NewUI_Class_Unknown.png',
+          'desconhecido': '/smite-icons/NewUI_Class_Unknown.png'
+        }]
+      ].forEach(([id, current, inputId, mapping]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const knownCurrent = [...el.options].some(o => o.value === current);
+        if (knownCurrent) {
+          el.value = current;
+        } else {
+          const input = document.getElementById(inputId);
+          const key = normalizeAboutIconName(input ? input.value : '');
+          const mapped = mapping[key];
+          // Não substitui imagem personalizada salva por uma imagem do banco.
+          el.value = '';
+          if (!current && mapped && [...el.options].some(o => o.value === mapped)) {
+            el.value = mapped;
+          }
+        }
       });
       document.getElementById('aboutModal').style.display = 'flex';
     }
@@ -1519,9 +1641,15 @@
         const pFile = document.getElementById('aboutPantheonImgFile').files[0];
         const tFile = document.getElementById('aboutTypeImgFile').files[0];
         const cFile = document.getElementById('aboutClassImgFile').files[0];
+        const pBank = document.getElementById('aboutPantheonBank').value;
+        const tBank = document.getElementById('aboutTypeBank').value;
+        const cBank = document.getElementById('aboutClassBank').value;
         if (pFile) god.pantheonImg = await storeBlob(pFile);
+        else if (pBank) god.pantheonImg = pBank;
         if (tFile) god.typeImg = await storeBlob(tFile);
+        else if (tBank) god.typeImg = tBank;
         if (cFile) god.classImg = await storeBlob(cFile);
+        else if (cBank) god.classImg = cBank;
         await saveStorageData();
         renderGodView();
         closeModal('aboutModal');
@@ -1644,7 +1772,11 @@
       audioVolume = Number(val) / 100;
       const label = document.getElementById('volumeValText');
       if (label) label.innerText = val + '%';
-      if (activeAudioInstance) activeAudioInstance.volume = audioVolume;
+      if (activeAudioInstance) {
+        const gain = Number.isFinite(activeAudioInstance.__smiteGain)
+          ? activeAudioInstance.__smiteGain : 1;
+        activeAudioInstance.volume = audioVolume * gain;
+      }
       try { localStorage.setItem('smite_audio_volume', String(audioVolume)); } catch (e) {}
     }
 
@@ -1719,61 +1851,144 @@
       btn.textContent = '▶️';
     }
 
-    function togglePlayAudio(ref, titleText, btnElement) {
-      const url = mediaSync(ref);
-      if (!url) return;
-
-      if (activeAudioInstance && activePlayButtonElement === btnElement) {
-        if (!activeAudioInstance.paused) {
-          activeAudioInstance.pause();
-          resetPlayButton(btnElement);
-          stopChatClock();
-          return;
-        }
-        activeAudioInstance.play().then(() => {
-          btnElement.classList.add('playing');
-          btnElement.textContent = '⏸️';
-          startPlayingChat(titleText);
-        }).catch(() => resetPlayButton(btnElement));
+    function fadeAudioGain(audio, targetGain, duration = 32, onComplete) {
+      if (!audio) {
+        if (onComplete) onComplete();
         return;
       }
 
-      if (activeAudioInstance) {
-        activeAudioInstance.pause();
-        resetPlayButton(activePlayButtonElement);
-        activeAudioInstance = null;
-        activePlayButtonElement = null;
+      const token = (audio.__smiteFadeToken || 0) + 1;
+      audio.__smiteFadeToken = token;
+      const startGain = Number.isFinite(audio.__smiteGain)
+        ? audio.__smiteGain : 1;
+      const startTime = performance.now();
+
+      const step = (now) => {
+        if (audio.__smiteFadeToken !== token) return;
+
+        const progress = duration <= 0
+          ? 1 : Math.min(1, (now - startTime) / duration);
+        const gain = startGain + (targetGain - startGain) * progress;
+
+        audio.__smiteGain = gain;
+        audio.volume = Math.max(0, Math.min(1, audioVolume * gain));
+
+        if (progress < 1) {
+          audio.__smiteFadeFrame = requestAnimationFrame(step);
+        } else {
+          audio.__smiteFadeFrame = 0;
+          if (onComplete) onComplete();
+        }
+      };
+
+      if (audio.__smiteFadeFrame) {
+        cancelAnimationFrame(audio.__smiteFadeFrame);
       }
+      audio.__smiteFadeFrame = requestAnimationFrame(step);
+    }
 
-      const audio = new Audio(url);
-      audio.volume = audioVolume;
-      activeAudioInstance = audio;
-      activePlayButtonElement = btnElement;
-      activeAudioLabel = titleText;
-      btnElement.classList.add('playing');
-      btnElement.textContent = '⏸️';
-      startPlayingChat(titleText);
+    function togglePlayAudio(ref, titleText, btnElement) {
+      const url = mediaSync(ref);
+      if (!url || !btnElement) return;
 
-      const played = audio.play();
-      if (played && played.catch) {
-        played.catch(() => {
+      const requestId = ++audioSwitchToken;
+      const current = activeAudioInstance;
+      const currentButton = activePlayButtonElement;
+
+      const startRequestedAudio = () => {
+        if (requestId !== audioSwitchToken) return;
+
+        const audio = new Audio(url);
+        audio.__smiteGain = 0;
+        audio.volume = 0;
+
+        activeAudioInstance = audio;
+        activePlayButtonElement = btnElement;
+        activeAudioLabel = titleText;
+
+        btnElement.classList.add('playing');
+        btnElement.textContent = '⏸️';
+        startPlayingChat(titleText);
+
+        audio.onended = () => {
           resetPlayButton(btnElement);
-          if (activePlayButtonElement === btnElement) {
+          if (activeAudioInstance === audio) {
             activeAudioInstance = null;
             activePlayButtonElement = null;
           }
           fadeOutPlayingChat();
+        };
+
+        audio.play().then(() => {
+          if (activeAudioInstance === audio && requestId === audioSwitchToken) {
+            fadeAudioGain(audio, 1, 32);
+          }
+        }).catch(() => {
+          if (activeAudioInstance === audio) {
+            activeAudioInstance = null;
+            activePlayButtonElement = null;
+          }
+          audio.onended = null;
+          audio.pause();
+          audio.volume = 0;
+          audio.__smiteGain = 0;
+          resetPlayButton(btnElement);
+          fadeOutPlayingChat();
         });
+      };
+
+      // Mesmo botão: pausar ou retomar a faixa atual.
+      if (current && currentButton === btnElement) {
+        if (!current.paused) {
+          fadeAudioGain(current, 0, 32, () => {
+            if (requestId !== audioSwitchToken) return;
+            current.pause();
+            current.volume = audioVolume;
+            current.__smiteGain = 1;
+            resetPlayButton(btnElement);
+            fadeOutPlayingChat();
+          });
+          return;
+        }
+
+        current.__smiteGain = 0;
+        current.volume = 0;
+        current.play().then(() => {
+          if (activeAudioInstance !== current || requestId !== audioSwitchToken) return;
+          btnElement.classList.add('playing');
+          btnElement.textContent = '⏸️';
+          fadeAudioGain(current, 1, 32);
+          startPlayingChat(titleText);
+        }).catch(() => {
+          if (activeAudioInstance === current) {
+            resetPlayButton(btnElement);
+            fadeOutPlayingChat();
+          }
+        });
+        return;
       }
 
-      audio.onended = () => {
-        resetPlayButton(btnElement);
-        if (activePlayButtonElement === btnElement) {
-          activeAudioInstance = null;
-          activePlayButtonElement = null;
-        }
-        fadeOutPlayingChat();
-      };
+      // Faixa anterior: terminar o fade-out e pará-la antes da próxima.
+      if (current) {
+        current.onended = null;
+        fadeAudioGain(current, 0, 32, () => {
+          current.pause();
+          try { current.currentTime = 0; } catch (e) {}
+          current.volume = 0;
+          current.__smiteGain = 0;
+          resetPlayButton(currentButton);
+
+          if (activeAudioInstance === current) {
+            activeAudioInstance = null;
+            activePlayButtonElement = null;
+          }
+
+          startRequestedAudio();
+        });
+        return;
+      }
+
+      startRequestedAudio();
     }
 
     function bindGlobalInteractions() {

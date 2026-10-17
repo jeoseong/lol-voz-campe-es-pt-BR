@@ -947,3 +947,20 @@
       outline: 2px solid #7FC0DC;
       outline-offset: 2px;
     }
+
+
+/* Banco de ícones locais no painel Sobre */
+#aboutModal select[id$="Bank"] {
+  width: 100%;
+  min-height: 38px;
+  margin: 5px 0 8px;
+  padding: 7px 10px;
+  color: #e5e7eb;
+  background: rgba(9, 12, 17, .96);
+  border: 1px solid var(--wiki-gold-border);
+  border-radius: 3px;
+}
+#aboutModal select[id$="Bank"]:focus-visible {
+  outline: 2px solid var(--wiki-gold-title);
+  outline-offset: 2px;
+}
